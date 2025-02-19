@@ -1,13 +1,16 @@
 {
   "name": "project-exchange",
   "version": "1.0.0",
-  "description": "Node.js TypeScript Application",
+  "description": "A project marketplace app for buying and selling projects, including college main projects, mini projects, and personal projects. Sellers can list their projects at their own price, with a service charge added to the total cost. The app also provides developer support, allowing buyers to request assistance with their purchased projects through paid support sessions.",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts"
   },
+  "keywords": [],
+  "author": "Aravind Pc",
+  "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
