@@ -1,10 +1,21 @@
-import express from 'express';
-import { Router } from 'express';
+import express, { Router } from 'express';
+import authRoutes from './auth';
+import userRoutes from './user';
+import projectRoutes from './projects';
+import adminRoutes from './admin';
 
 const router: Router = express.Router();
 
-router.get('/', (req, res) => {
-    res.json({ message: 'Welcome to the API' });
-});
+// Mount authentication routes
+router.use('/auth', authRoutes);
+
+// Mount user routes
+router.use('/user', userRoutes);
+
+// Mount project routes
+router.use('/projects', projectRoutes);
+
+// Mount admin routes
+router.use('/admin', adminRoutes);
 
 export default router;
