@@ -4,6 +4,7 @@ import routes from './routes';
 import mongoConnection from './config/mongoConnection';
 import morgan from 'morgan';
 import cors from 'cors';
+import path from 'path';
 
 const app: Express = express();
 
@@ -27,7 +28,13 @@ if (config.nodeEnv === 'development') {
   app.use(morgan('combined'));
 }
 
+// Serve static files
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/assets/process.jpg'));
+});
 app.use('/api', routes);
 
 app.listen(config.port, () => {
