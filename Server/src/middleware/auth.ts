@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { config } from '../config/config';
 
 interface AuthRequest extends Request {
     user?: any;
@@ -34,15 +35,13 @@ export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunctio
 
 export const isAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        // Get token from header
         const token = req.header('x-auth-token');
 
         if (!token) {
             return res.status(401).json({ msg: 'No token, authorization denied' });
         }
 
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const decoded = jwt.verify(token, config.jwtSecret);
         
         if (typeof decoded === 'object' && decoded !== null) {
             req.user = decoded;
