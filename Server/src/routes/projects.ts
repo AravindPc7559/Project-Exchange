@@ -14,12 +14,12 @@ router.get('/:projectId', /* projectController.getProjectDetails */);
 router.get('/:projectId/similar', /* projectController.getSimilarProjects */);
 
 // Project Reviews
-router.post('/:projectId/review', isAuth, /* projectController.addReview */);
+router.post('/:projectId/review', isAuth, ProjectController.addReview);
 
 // Project Upload & Management
 router.post('/upload', isAuth, ProjectController.uploadProject);
 router.put('/:projectId', isAuth, ProjectController.updateProject);
-router.delete('/:projectId', isAuth, /* projectController.deleteProject */);
+router.delete('/:projectId', isAuth, ProjectController.deleteProject);
 router.put('/:projectId/request-approval', isAuth, /* projectController.requestApproval */);
 
 export default router;

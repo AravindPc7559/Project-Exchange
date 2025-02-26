@@ -163,7 +163,6 @@ const updateProject = (req: any, res: Response) => {
                     techUsed: tech,
                     category,
                     price,
-                    userId,
                     file: zipUrl,
                     demoVideo: videoUrl,
                     document: documentUrl
@@ -182,4 +181,89 @@ const updateProject = (req: any, res: Response) => {
     }
 }
 
-export default { uploadProject, updateProject };
+/**
+ * Deletes an existing project and its associated files (if any).
+ *
+ * @async
+ * @function deleteProject
+ * @param {Request} req - The request object containing the project ID to be deleted.
+ * @param {Response} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves when the project is deleted or rejects with an error.
+ * 
+ * @throws {Error} If an internal server error occurs during the deletion process.
+ * @throws {Error} If the project ID is not found.
+ *
+ * @example
+ * // Example usage:
+ * deleteProject(req, res)
+ *   .then(() => console.log('Project deleted successfully'))
+ *   .catch(err => console.error('Error deleting project:', err));
+ */
+const deleteProject = async (req: any, res: Response) => {
+    try {
+        const { projectId } = req.params;
+
+        const data: any = await Project.findById({_id: projectId}).select('file demoVideo document').lean();
+
+        const urls = [data.file, data.demoVideo, data.document]
+
+        for(const url of urls){
+            if (url) {
+                await deleteFile(url)
+            }
+        }
+
+        const project = await Project.findByIdAndDelete(projectId);
+
+        if(project){
+            res.status(200).json({ message: 'Project deleted successfully' });
+        } else{
+            res.status(404).json({ message: 'Project not found' });
+        }
+    } catch(err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+/**
+ * Adds a review to an existing project.
+ *
+ * @async
+ * @function addReview
+ * @param {Request} req - The request object containing the project ID and review details.
+ * @param {Response} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves when the review is added or rejects with an error.
+ * 
+ * @throws {Error} If an internal server error occurs during the addition of the review.
+ * @throws {Error} If the project ID is invalid or not found.
+ *
+ * @example
+ * // Example usage:
+ * addReview(req, res)
+ *   .then(() => console.log('Review added successfully'))
+ *   .catch(err => console.error('Error adding review:', err));
+ */
+const addReview = async (req: any, res: Response) => {
+    try {
+        const { projectId } = req.params
+        const { rating, review, userId } = req.body
+
+        if(!projectId){
+            res.status(400).json({ message: 'Invalid request body' })
+        }
+
+        const project = await Project.findByIdAndUpdate({_id: projectId}, {
+            $push: { reviews: { rating, review, userId } }
+        })
+
+        if(project){
+            res.status(200).json({ message: 'Review added successfully' });
+        } else{
+            res.status(404).json({ message: 'Project not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { uploadProject, updateProject, deleteProject, addReview };
