@@ -90,6 +90,23 @@ const uploadProject = async (req: any, res: Response) => {
     }
 }
 
+/**
+ * Updates an existing project with new details and associated files (zip, video, document).
+ *
+ * @function updateProject
+ * @param {Request} req - The request object containing project ID and updated details.
+ * @param {Response} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves when the project is updated or rejects with an error.
+ * 
+ * @throws {Error} If an internal server error occurs during the update process.
+ * @throws {Error} If the project ID is invalid or not found.
+ *
+ * @example
+ * // Example usage:
+ * updateProject(req, res)
+ *   .then(() => console.log('Project updated successfully'))
+ *   .catch(err => console.error('Error updating project:', err));
+ */
 const updateProject = (req: any, res: Response) => {
     try {
         uploadProjectMulter.fields([
