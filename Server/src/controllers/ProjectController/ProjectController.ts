@@ -44,8 +44,10 @@ const uploadProject = async (req: any, res: Response) => {
             const documentFile = req.files?.document ? req.files.document[0] : null;
 
             if (zipFile) {
-                const s3Data = await zipFileManagement(zipFile)
-
+                const s3Data: any = await zipFileManagement(zipFile)
+                if(s3Data.code){
+                    return res.status(400).json({ message: 'This Project Is Already Uploaded By Another User' });
+                }
                 const uploadedZipFile = await uploadFile(s3Data, `Projects/${userId}`);
                 zipUrl = uploadedZipFile;
 
@@ -139,7 +141,11 @@ const updateProject = (req: any, res: Response) => {
                 if (currentData?.file) {
                     await deleteFile(currentData?.file)
                 }
-                const s3Data = await zipFileManagement(zipFile)
+                const s3Data: any = await zipFileManagement(zipFile)
+
+                if(s3Data.code){
+                    return res.status(400).json({ message: 'This Project Is Already Uploaded By Another User' });
+                }
 
                 const uploadedZipFile = await uploadFile(s3Data, `Projects/${userId}`);
                 zipUrl = uploadedZipFile;

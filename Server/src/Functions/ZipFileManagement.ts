@@ -1,6 +1,7 @@
 import AdmZip from "adm-zip";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import path from "path";
+import * as mammoth from "mammoth";
 
 /**
  * Manages the creation of a zip file by adding a security code document to it.
@@ -21,6 +22,25 @@ import path from "path";
 const zipFileManagement = async (zipFile: any) => {
     const documentName = `License_Code`;
     const randomNumber = Math.floor(100000 + Math.random() * 900000);
+
+    const zip = new AdmZip(zipFile?.path);
+    const existingEntry = zip.getEntry(documentName);
+
+    if (existingEntry) {
+        const docBuffer = zip.readFile(existingEntry);
+        if (docBuffer) {
+            const result = await mammoth.extractRawText({ buffer: docBuffer });
+            const textContent = result.value.trim(); 
+
+            const match = textContent.match(/Security Code: (\d+)/);
+            const securityCode = match ? match[1] : "Not found";
+
+            return {
+                code: securityCode
+            }
+        }
+    }
+
     const doc = new Document({
         sections: [
             {
@@ -35,7 +55,6 @@ const zipFileManagement = async (zipFile: any) => {
     });
 
     const buffer = await Packer.toBuffer(doc);
-    const zip = new AdmZip(zipFile?.path);
     zip.addFile(documentName, buffer);
     zip.writeZip(zipFile?.path);
     const fileName = path.basename(zipFile?.path);
@@ -44,6 +63,7 @@ const zipFileManagement = async (zipFile: any) => {
         path: zipFile?.path,
         mimetype: zipFile.mimetype,
         originalname: fileName,
+        securityCode: randomNumber
     }
 
     return data
