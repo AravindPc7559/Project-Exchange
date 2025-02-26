@@ -5,8 +5,14 @@ import mongoConnection from './config/mongoConnection';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
+import redisClient from './utils/redisClient';
 
 const app: Express = express();
+
+// Connect to Redis
+(async () => {
+  await redisClient.connect();
+})();
 
 // DB Connection.
 mongoConnection()

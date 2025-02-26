@@ -22,7 +22,6 @@ interface UploadedFile {
 
 export const uploadFile = async (file: UploadedFile, folderName: string): Promise<string> => {
     const fileStream = fs.createReadStream(file.path);
-    
     const fileName = `${folderName}/${Date.now()}-${file.originalname}`;
     
     const uploadParams = {
@@ -37,6 +36,14 @@ export const uploadFile = async (file: UploadedFile, folderName: string): Promis
                 fs.unlink(file.path, (err) => {
             if (err) {
                 console.error('Error deleting temporary file:', err);
+            }
+        });
+
+        fs.unlink(file.path, (err) => {
+            if (err) {
+                console.error("Error deleting temporary file:", err);
+            } else {
+                console.log("Temporary file deleted:", file.path);
             }
         });
 

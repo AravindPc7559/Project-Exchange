@@ -36,7 +36,7 @@ router.put('/update/:id', isAuth, UserController.updateProfile);
 router.post('/upload-avatar/:id', isAuth, upload.single('profilePic'), UserController.updateProfilePicture);
 
 // User Dashboard
-router.get('/projects', isAuth,  /* userController.getUserProjects */);
+router.get('/projects', isAuth,  UserController.getUserProjects);
 router.get('/purchases', isAuth, /* userController.getPurchaseHistory */);
 
 // Earnings & Withdrawal

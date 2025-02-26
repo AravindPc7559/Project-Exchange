@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../../models/User";
 import { uploadFile } from "../../utils/s3";
 import { RequestHandler } from 'express';
+import { Project } from "../../models/Project";
 
 interface MulterRequest extends Request {
     file?: any
@@ -96,4 +97,37 @@ const updateProfilePicture = async (req: MulterRequest, res: Response) => {
     }
 }
 
-export default { updateProfile, updateProfilePicture }
+/**
+ * Gets projects uploaded by a user
+ * @async
+ * @param {Request} req - Express request object
+ * @param {Object} req.body - Request body object
+ * @param {string} req.body.userId - User's ID
+ * @param {number} [req.body.limit] - Number of projects to fetch
+ * @param {Response} res - Express response object
+ * @returns {Promise<void>} Returns a JSON response with projects
+ * @throws {Error} If project fetch fails
+ */
+const getUserProjects = async ({ body }: Request, res: Response) => {
+    try {
+        const { userId, limit } = body;
+        const dataLimit = limit ?? null;
+
+        if (!userId) {
+            return res.status(400).json({ message: 'Invalid request body' });
+        }
+
+        const projects = await Project.find({ userId }, null, { limit: dataLimit }).lean();
+
+        if (projects.length) {
+            res.status(200).json({ message: 'Projects fetched successfully', projects });
+        } else {
+            res.status(200).json({ message: "No projects found" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { updateProfile, updateProfilePicture, getUserProjects }

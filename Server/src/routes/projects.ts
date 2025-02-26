@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import { isAuth } from '../middleware/auth';
+import ProjectController from '../controllers/ProjectController/ProjectController';
 
 const router: Router = express.Router();
 
@@ -16,7 +17,7 @@ router.get('/:projectId/similar', /* projectController.getSimilarProjects */);
 router.post('/:projectId/review', isAuth, /* projectController.addReview */);
 
 // Project Upload & Management
-router.post('/upload', isAuth, /* projectController.uploadProject */);
+router.post('/upload', isAuth, ProjectController.uploadProject);
 router.put('/:projectId', isAuth, /* projectController.updateProject */);
 router.delete('/:projectId', isAuth, /* projectController.deleteProject */);
 router.put('/:projectId/request-approval', isAuth, /* projectController.requestApproval */);
