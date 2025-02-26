@@ -11,8 +11,20 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: any, cb: any) => {
-  const allowedTypes = ['application/zip', 'video/mp4', 'video/mkv', 'video/avi'];
-  
+  const allowedTypes = [
+    'application/zip',
+    'video/mp4',
+    'video/mkv',
+    'video/avi',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  ];
+    
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {

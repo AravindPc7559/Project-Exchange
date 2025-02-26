@@ -49,11 +49,11 @@ const projectSchema = new Schema<IProject>({
   },
   document: {
     type: String,
-    required: true
+    required: false
   },
   demoVideo: {
     type: String,
-    required: true
+    required: false
   },
   userId: {
     type: Schema.Types.ObjectId,
