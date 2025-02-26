@@ -6,7 +6,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 export const config = {
-    port: process.env.PORT || 3005,
+    port: process.env.PORT || 3006,
     nodeEnv: process.env.NODE_ENV || 'development',
     mongoUrl: process.env.MONGO_URL || 'mongodb://localhost:27017/project-exchange',
     jwtSecret: process.env.JWT_SECRET,

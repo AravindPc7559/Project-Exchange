@@ -18,7 +18,7 @@ router.post('/:projectId/review', isAuth, /* projectController.addReview */);
 
 // Project Upload & Management
 router.post('/upload', isAuth, ProjectController.uploadProject);
-router.put('/:projectId', isAuth, /* projectController.updateProject */);
+router.put('/:projectId', isAuth, ProjectController.updateProject);
 router.delete('/:projectId', isAuth, /* projectController.deleteProject */);
 router.put('/:projectId/request-approval', isAuth, /* projectController.requestApproval */);
 
