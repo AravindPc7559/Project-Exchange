@@ -10,8 +10,7 @@ router.get('/search', /* projectController.searchProjects */);
 router.get('/trending', /* projectController.getTrendingProjects */);
 
 // Project Details
-router.get('/:projectId', /* projectController.getProjectDetails */);
-router.get('/:projectId/similar', /* projectController.getSimilarProjects */);
+router.get('/:projectId', isAuth, ProjectController.getProjectDetails);
 
 // Project Reviews
 router.post('/:projectId/review', isAuth, ProjectController.addReview);

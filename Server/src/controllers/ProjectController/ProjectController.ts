@@ -2,8 +2,9 @@ import { Response } from "express";
 import uploadProjectMulter from "../../utils/MulterConfig/ProjectMulterConfig";
 import { uploadFile, deleteFile } from "../../utils/s3";
 import { Project } from "../../models/Project";
-import zipFileManagement from "../../Functions/zipFileManagement";
 import { IProject } from "../../types/modelTypes";
+import zipFileManagement from "../../Functions/ZipFileManagement";
+import AggregationQuery from "../../utils/AggregationQuerys/AggregationQuerys";
 
 /**
  * Uploads a project along with its associated files (zip, video, document).
@@ -47,6 +48,9 @@ const uploadProject = async (req: any, res: Response) => {
                 const s3Data: any = await zipFileManagement(zipFile)
                 if(s3Data.code){
                     return res.status(400).json({ message: 'This Project Is Already Uploaded By Another User' });
+                }
+                if(s3Data.securityCode){
+                    
                 }
                 const uploadedZipFile = await uploadFile(s3Data, `Projects/${userId}`);
                 zipUrl = uploadedZipFile;
@@ -272,4 +276,37 @@ const addReview = async (req: any, res: Response) => {
     }
 }
 
-export default { uploadProject, updateProject, deleteProject, addReview };
+/**
+ * Retrieves the details of a project based on the provided project ID.
+ * 
+ * @param {Object} req - The request object containing the project ID in the parameters.
+ * @param {Object} res - The response object used to send the response back to the client.
+ * 
+ * @returns {Promise<void>} - Sends a JSON response with the project details or an error message.
+ * 
+ * @throws {Error} - Returns a 400 status code if the project ID is invalid, 
+ *                   a 404 status code if the project is not found, 
+ *                   or a 500 status code for internal server errors.
+ */
+const getProjectDetails = async (req: any, res: Response) => {
+    try {
+      const { projectId } = req.params;
+      if(!projectId){
+        res.status(400).json({ message: 'Invalid request body' })
+      }
+
+      const query = AggregationQuery.getProjectQuery(projectId)
+      const project = await Project.aggregate(query)
+
+      if(project){
+        res.status(200).json(project)
+      } else{
+        res.status(404).json({ message: 'Project not found' })
+      }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { uploadProject, updateProject, deleteProject, addReview, getProjectDetails };
