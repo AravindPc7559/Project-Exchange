@@ -6,7 +6,7 @@ const router: Router = express.Router();
 
 // Project Listing & Search
 router.get('/', /* projectController.getProjects */);
-router.get('/search', /* projectController.searchProjects */);
+router.get('/search', isAuth, ProjectController.searchProjects);
 router.get('/trending', /* projectController.getTrendingProjects */);
 
 // Project Details

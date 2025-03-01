@@ -309,4 +309,30 @@ const getProjectDetails = async (req: any, res: Response) => {
     }
 }
 
-export default { uploadProject, updateProject, deleteProject, addReview, getProjectDetails };
+/**
+ * Searches for projects based on the provided search term in the request body.
+ *
+ * @param {Request} req - The request object containing the search term.
+ * @param {Response} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
+const searchProjects = async (req: any, res: Response) => {
+    try {
+        const { search } = req.body
+        if(search){
+            const projects = await Project.find({ 
+                title: { $regex: search, $options: 'i' } 
+            }) 
+
+            if(projects?.length){
+                res.status(200).json(projects)
+            } else {
+                res.status(404).json({Message: "No Result Found"})
+            }
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { uploadProject, updateProject, deleteProject, addReview, getProjectDetails, searchProjects };
