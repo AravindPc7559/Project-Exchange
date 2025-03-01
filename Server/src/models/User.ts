@@ -33,6 +33,9 @@ const UserSchema: Schema = new Schema({
   interests: [{
     type: String,
   }],
+  departMent: {
+    type: String
+  },
   profilePic: {
     type: String,
     default: '',

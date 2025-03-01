@@ -5,7 +5,7 @@ import ProjectController from '../controllers/ProjectController/ProjectControlle
 const router: Router = express.Router();
 
 // Project Listing & Search
-router.get('/', /* projectController.getProjects */);
+router.get('/', isAuth, ProjectController.getProjects);
 router.get('/search', isAuth, ProjectController.searchProjects);
 router.get('/trending', /* projectController.getTrendingProjects */);
 

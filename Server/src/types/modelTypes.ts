@@ -13,6 +13,7 @@ export interface IUser extends Document {
     uploadedProjects: mongoose.Types.ObjectId[];
     purchasedProjects: mongoose.Types.ObjectId[];
     earnings: number;
+    departMent: string;
   }
   
   export interface IReview {

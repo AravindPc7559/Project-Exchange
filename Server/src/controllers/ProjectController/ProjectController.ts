@@ -5,6 +5,7 @@ import { Project } from "../../models/Project";
 import { IProject } from "../../types/modelTypes";
 import zipFileManagement from "../../Functions/ZipFileManagement";
 import AggregationQuery from "../../utils/AggregationQuerys/AggregationQuerys";
+import { User } from "../../models/User";
 
 /**
  * Uploads a project along with its associated files (zip, video, document).
@@ -335,4 +336,46 @@ const searchProjects = async (req: any, res: Response) => {
     }
 }
 
-export default { uploadProject, updateProject, deleteProject, addReview, getProjectDetails, searchProjects };
+/**
+ * Retrieves projects based on the user's department and interests, excluding their own projects.
+ *
+ * @param {Request} req - The request object containing user information.
+ * @param {Response} res - The response object used to send back the desired HTTP response.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
+const getProjects = async (req: any, res: Response) => {
+    try {
+        if(!req.user.id){
+            res.status(400).json({ message: 'Invalid request body' })
+        }
+
+        const user = await User.findById({_id: req.user.id}).lean();
+
+        if(user){
+            const projects = await Project.find({
+                $and: [
+                    {
+                        $or: [
+                            { category: { $in: [user.departMent, ...user.interests] } }, 
+                            { techUsed: { $in: user.interests } }
+                        ]
+                    },
+                    {
+                        userId: { $ne: req.user.id }
+                    }
+                ]
+            }).lean();
+            if(projects?.length){
+                res.status(200).json(projects)
+            } else {
+                res.status(404).json({Message: "No Result Found"})
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { uploadProject, updateProject, deleteProject, addReview,
+ getProjectDetails, searchProjects, getProjects };
