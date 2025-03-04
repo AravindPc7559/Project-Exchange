@@ -14,6 +14,7 @@ export interface IUser extends Document {
     purchasedProjects: mongoose.Types.ObjectId[];
     earnings: number;
     departMent: string;
+    category: string;
   }
   
   export interface IReview {
@@ -35,5 +36,6 @@ export interface IUser extends Document {
     reviews: IReview[];
     approvalStatus: 'pending' | 'approved' | 'rejected';
     isFeatured: boolean;
+    downloads: Number;
   }
   

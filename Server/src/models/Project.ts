@@ -47,6 +47,10 @@ const projectSchema = new Schema<IProject>({
     type: String,
     required: true
   },
+  downloads: {
+    type: Number,
+    default: 0
+  },
   document: {
     type: String,
     required: false

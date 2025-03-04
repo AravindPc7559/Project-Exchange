@@ -3,6 +3,7 @@ import { User } from "../../models/User";
 import { uploadFile } from "../../utils/s3";
 import { RequestHandler } from 'express';
 import { Project } from "../../models/Project";
+import redisClient from "../../utils/redisClient";
 
 interface MulterRequest extends Request {
     file?: any
@@ -130,4 +131,50 @@ const getUserProjects = async ({ body }: Request, res: Response) => {
     }
 }
 
-export default { updateProfile, updateProfilePicture, getUserProjects }
+/**
+ * Gets projects uploaded by other users matching the logged in user's interests
+ * @async
+ * @param {Request} req - Express request object
+ * @param {Object} req.params - URL parameters
+ * @param {string} req.params.userId - User's ID
+ * @param {Response} res - Express response object
+ * @returns {Promise<void>} Returns a JSON response with projects
+ * @throws {Error} If project fetch fails
+ */
+const getUserHomepageProjects = async ({ params }: Request, res: Response) => {
+    try {
+        const { userId } = params;
+        if (!userId) {
+            return res.status(400).json({ message: 'Invalid request params' });
+        }
+
+        const userCache = await redisClient.get(`${userId}_user_info`);
+        const userData = userCache ? JSON.parse(userCache) : await User.findById(userId, null, { lean: true });
+
+        if (!userData) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const projects = await Project.find(
+            {
+                $and: [
+                    { userId: { $ne: userId } },
+                    { $or: [{ techUsed: { $in: userData.interests } }, { category: userData.category }] },
+                ],
+            },
+            null,
+            { lean: true, limit: 10 }
+        );
+
+        if (projects.length) {
+            res.status(200).json({ message: 'Projects fetched successfully', projects });
+        } else {
+            res.status(200).json({ message: "No projects found" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export default { updateProfile, updateProfilePicture, getUserProjects, getUserHomepageProjects }

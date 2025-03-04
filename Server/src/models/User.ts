@@ -18,6 +18,10 @@ const UserSchema: Schema = new Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+  },
   mobile: {
     type: String,
     required: true,

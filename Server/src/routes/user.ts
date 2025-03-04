@@ -39,6 +39,9 @@ router.post('/upload-avatar/:id', isAuth, upload.single('profilePic'), UserContr
 router.get('/projects', isAuth,  UserController.getUserProjects);
 router.get('/purchases', isAuth, /* userController.getPurchaseHistory */);
 
+// User Homepage
+router.get('/homepageProjects/:userId', isAuth,  UserController.getUserHomepageProjects);
+
 // Earnings & Withdrawal
 router.get('/earnings', isAuth, /* userController.getEarnings */);
 router.post('/withdraw', isAuth, /* userController.requestWithdrawal */);

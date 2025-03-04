@@ -43,7 +43,7 @@ const AggregationQuery = {
                 }
             }
         ];
-    }
+    },
 };
 
 export default AggregationQuery;

@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
+import redisClient from "../../utils/redisClient";
 
 /**
  * Handles new user registration
@@ -59,8 +60,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
         const {email, password} = req.body;
 
-        const user = await User.findOne({ email }).select('_id email password');
-
+        const user = await User.findOne({ email }).lean();
+        
         if(!user) return res.status(400).json({ message: 'User not found' });
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -72,6 +73,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
             config.jwtSecret as string,
             { expiresIn: '30d' }
         );
+        
+        const redisItem = {...user}
+        Reflect.deleteProperty(redisItem, 'password');
+        redisClient.SET(`${user._id}_user_info`, JSON.stringify(redisItem));
 
         res.status(200).json({
             message: 'Login successful',
