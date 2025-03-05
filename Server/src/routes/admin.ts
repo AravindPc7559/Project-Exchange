@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
 import { isAdmin } from '../middleware/auth';
+import adminController from '../controllers/AdminController/adminController';
 
 const router: Router = express.Router();
 
 // Admin Authentication
-router.post('/login', /* adminController.login */);
+router.post('/login', adminController.adminLogin);
 
 // Dashboard
 router.get('/dashboard', isAdmin, /* adminController.getDashboardStats */);

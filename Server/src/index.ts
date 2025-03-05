@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 import redisClient from './utils/redisClient';
+import initializeSeedData from './Seed/initializeSeedData';
 
 const app: Express = express();
 
@@ -26,6 +27,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Adding Seed Data
+initializeSeedData()
 
 // Logger Middleware
 if (config.nodeEnv === 'development') {

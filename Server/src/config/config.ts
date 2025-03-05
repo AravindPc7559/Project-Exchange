@@ -14,5 +14,8 @@ export const config = {
     awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     awsRegion: process.env.AWS_REGION,
     awsBucketName: process.env.AWS_BUCKET_NAME,
-    redisPassword: process.env.REDIS_PASSWORD
+    redisPassword: process.env.REDIS_PASSWORD,
+    addSeedData: process.env.ADD_SEED_DATA,
+    adminEmail: process.env.ADMIN_EMAIL,
+    adminPassword: process.env.ADMIN_PASSWORD
 };
