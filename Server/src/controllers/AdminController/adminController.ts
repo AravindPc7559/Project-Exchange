@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/config";
 import { User } from "../../models/User";
+import redisClient from "../../utils/redisClient";
 
 const adminLogin = async (req: Request, res: Response) => {
     try {
@@ -35,8 +36,26 @@ const getAllUsers = async (req: Request, res: Response) => {
     try {
         const { limit } = req.body
         let dataLimit = limit ?? 10
+        const cacheKey = `adminUsers:${dataLimit}`;
+
+        const cachedData = await redisClient.get(cacheKey);
+
+        if(cachedData){
+            return res.status(200).json({users: JSON.parse(cachedData)});
+        }
         
-        const users = await User.find({}, null, { limit: dataLimit }).lean();
+        const users = await User.find({}, { password: 0 }, { limit: dataLimit }).lean();
+
+        const keys = await redisClient.keys('users:*');
+        for (const key of keys) {
+            if (key !== cacheKey) {
+              await redisClient.del(key);
+            }
+        }
+
+        await redisClient.set(cacheKey, JSON.stringify(users), {
+            EX: 10800,
+          });
 
         res.status(200).json({ users });
         
