@@ -3,6 +3,7 @@ import Admin from "../../models/Admin";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/config";
+import { User } from "../../models/User";
 
 const adminLogin = async (req: Request, res: Response) => {
     try {
@@ -30,4 +31,18 @@ const adminLogin = async (req: Request, res: Response) => {
     }
 }
 
-export default { adminLogin }
+const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const { limit } = req.body
+        let dataLimit = limit ?? 10
+        
+        const users = await User.find({}, null, { limit: dataLimit }).lean();
+
+        res.status(200).json({ users });
+        
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+} 
+
+export default { adminLogin, getAllUsers }

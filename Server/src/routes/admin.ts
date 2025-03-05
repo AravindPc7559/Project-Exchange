@@ -8,10 +8,10 @@ const router: Router = express.Router();
 router.post('/login', adminController.adminLogin);
 
 // Dashboard
-router.get('/dashboard', isAdmin, /* adminController.getDashboardStats */);
+router.get('/dashboard', isAdmin, );
 
 // User Management
-router.get('/users', isAdmin, /* adminController.getAllUsers */);
+router.get('/users', isAdmin, adminController.getAllUsers);
 router.put('/users/:userId', isAdmin, /* adminController.updateUser */);
 router.delete('/users/:userId', isAdmin, /* adminController.deleteUser */);
 router.put('/users/:userId/ban', isAdmin, /* adminController.toggleUserBan */);

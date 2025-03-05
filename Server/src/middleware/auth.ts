@@ -16,16 +16,10 @@ export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunctio
         }
 
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const decoded = jwt.verify(token, config.jwtSecret || 'your-secret-key');
         
         if (typeof decoded === 'object' && decoded !== null) {
-            req.user = decoded;
-            
-            // Check if user is admin
-            if (!req.user.isAdmin) {
-                return res.status(403).json({ msg: 'Access denied. Admin privileges required.' });
-            }
-            
+            req.user = decoded;            
             next();
         }
     } catch (err) {
