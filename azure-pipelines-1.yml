@@ -1,27 +1,43 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
-- main
+  - main  # Adjust the branch as needed
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+  - checkout: self
 
-- script: |
+  - task: UseNode@1
+    inputs:
+      version: '18.x'  # Set the appropriate Node.js version
+    displayName: 'Use Node.js'
+
+  - script: |
       cd Server
       npm install
-  displayName: "Package installing"
+    displayName: 'Install Dependencies'
 
-- script: |
-    cd Server
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+  - script: |
+      cd Server
+      npm run build
+    displayName: 'Build Server'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: 'Server'  # Zip the Server folder
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/Server.zip'
+      replaceExistingArchive: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: 'drop'
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/Server.zip'
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: 'Free Trial(2818f258-55d9-4ab8-89f8-eeb1a1393c2b)'
+      appName: 'TestXApp'
+      package: '$(Build.ArtifactStagingDirectory)/Server.zip'
+      runtimeStack: 'NODE|18-lts'  # Adjust based on Node.js version
