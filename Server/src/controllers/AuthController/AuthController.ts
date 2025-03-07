@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
 import redisClient from "../../utils/redisClient";
+import { IUser } from "../../types/modelTypes";
 
 /**
  * Handles new user registration
@@ -60,9 +61,16 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
         const {email, password} = req.body;
 
-        const user = await User.findOne({ email }).lean();
+        const user= await User.findOne({ email }).lean();
         
         if(!user) return res.status(400).json({ message: 'User not found' });
+
+        if(user){
+            if(user?.isBan?.ban){
+                let date = new Date(user?.isBan?.duration);
+                return res.status(400).json({ message: 'Your account is banned. You can access the account after '+ date.toLocaleDateString()});
+            }
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
 

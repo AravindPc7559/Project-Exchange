@@ -15,6 +15,10 @@ export interface IUser extends Document {
     earnings: number;
     departMent: string;
     category: string;
+    isBan: {
+        ban: boolean;
+        duration: string;
+    }
   }
   
   export interface IReview {

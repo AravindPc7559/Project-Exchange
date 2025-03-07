@@ -44,6 +44,16 @@ const UserSchema: Schema = new Schema({
     type: String,
     default: '',
   },
+  isBan: {
+    ban: {
+      type: Boolean,
+      default: false
+    },
+    duration: {
+      type: Date,
+      default: null
+    }
+  },
   uploadedProjects: [{
     type: Schema.Types.ObjectId,
     ref: 'Project',
