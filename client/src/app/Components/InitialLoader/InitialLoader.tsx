@@ -1,19 +1,9 @@
 'use client'
-import Image from "next/image";
 import { useEffect, useState } from 'react';
 
 export default function InitialLoader() {
   const [status, setStatus] = useState('SYSTEM INITIALIZING');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStatus((prev) =>
-        prev === 'SYSTEM INITIALIZING' ? 'LOADING DATA' : 'SYSTEM INITIALIZING'
-      );
-    }, 1500);
-
-    return () => clearInterval(interval);
-  }, []);
   return (
     <div className="flex items-center justify-center h-screen bg-[#0f0f1a] overflow-hidden">
     <div className="text-center relative w-full max-w-2xl px-5">

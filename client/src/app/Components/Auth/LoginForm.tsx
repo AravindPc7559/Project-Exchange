@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { addToSession } from '@/app/Functions/sessionManager/sessionManager';
-import { NextResponse } from 'next/server';
 
 export default function LoginForm() {
     const router = useRouter();
@@ -29,9 +27,7 @@ export default function LoginForm() {
         setError('');
 
         try {
-            console.log("formData", formData)
             const response = await axios.post('/api/auth/login', formData)
-            console.log("response", response)
             if(response.data && response.status === 200){
                 router.push('/homepage');
             }
