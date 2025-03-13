@@ -6,19 +6,28 @@ export async function POST(Request: Request) {
     try {
         const { email, password } = await Request.json();
 
-    if(!email || !password){
-         throw new Error("Invalid email or password");
-    }
+        if(!email || !password){
+            throw new Error("Invalid email or password");
+        }
 
-    const response = await BaseConnection({
-        method: HttpMethod.POST,
-        route: '/api/auth/login',
-        data: { email, password},
-        useAuth: false
-    })
+        const response = await BaseConnection({
+            method: HttpMethod.POST,
+            route: '/api/auth/login',
+            data: { email, password},
+            useAuth: false
+        });
 
-    return NextResponse.json(response, {status: 200})
+        const nextResponse = NextResponse.json(response, {status: 200});
+        nextResponse.cookies.set('jwtToken', response.token, { 
+            httpOnly: true,  
+            secure: process.env.NODE_ENV === 'production', 
+            path: '/',
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24 * 30,
+        });
+
+        return nextResponse;
     } catch (error) {
-        NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     }
 }

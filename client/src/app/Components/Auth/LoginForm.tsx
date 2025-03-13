@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { addToSession } from '@/app/Functions/sessionManager/sessionManager';
+import { NextResponse } from 'next/server';
 
 export default function LoginForm() {
     const router = useRouter();
@@ -30,9 +31,9 @@ export default function LoginForm() {
         try {
             console.log("formData", formData)
             const response = await axios.post('/api/auth/login', formData)
+            console.log("response", response)
             if(response.data && response.status === 200){
-                addToSession('jwtToken', response.data.token);
-                router.push('/dashboard');
+                router.push('/homepage');
             }
         } catch (err) {
             setError((err as Error).message || 'Something went wrong during login');
