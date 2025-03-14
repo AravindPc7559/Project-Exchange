@@ -1,5 +1,11 @@
+import Header from "../Components/Header/Header"
+
 const page = () => {
-    return <div>page</div>
+    return (
+        <div>
+            <Header />
+        </div>
+    )
 }
 
 export default page
