@@ -15,16 +15,15 @@ pipeline {
             }
         }
 
-        stage('Setup Node') {
-            steps {
-                script {
-                    def nodeHome = tool name: 'NodeJS', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-                    env.PATH = "${nodeHome}/bin:${env.PATH}"
-                    sh "nvm install $NODE_VERSION"
-                    sh "nvm use $NODE_VERSION"
-                }
-            }
+stage('Setup Node.js') {
+    steps {
+        script {
+            def nodeHome = tool name: 'NodeJS 20.x', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+            env.PATH = "${nodeHome}/bin:${env.PATH}"
         }
+    }
+}
+
 
         stage('Install and Build') {
             steps {
