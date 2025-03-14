@@ -1,94 +1,17 @@
 pipeline {
     agent any
-    
-    environment {
-        NODE_VERSION = '20.x'
-        SSH_USER = 'user'
-        SSH_SERVER = 'your-server'
-        PROJECT_PATH = '/path/to/project'
-    }
 
     stages {
-        stage('Checkout Code') {
+        stage('Navigate to Client Folder') {
             steps {
-                checkout scm
-            }
-        }
-
-stage('Setup Node.js') {
-    steps {
-        script {
-            def nodeHome = tool name: 'NodeJS 20.x', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-            env.PATH = "${nodeHome}/bin:${env.PATH}"
-        }
-    }
-}
-
-
-        stage('Install and Build') {
-            steps {
-                sh '''
-                # Install dependencies and build client
-                cd client
-                npm ci
-                npm run build
-
-                # Install dependencies and build server
-                cd ../server
-                npm ci
-                npm run build
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                cd client
-                npm test || true
-
-                cd ../server
-                npm test || true
-                '''
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sshagent(['your-ssh-credentials-id']) {
-                    sh '''
-                    ssh $SSH_USER@$SSH_SERVER 'bash -s' << 'EOF'
-                        set -e
-                        cd $PROJECT_PATH
-
-                        # Fetch the latest code and reset
-                        git fetch origin main
-                        git reset --hard origin/main
-
-                        # Deploy client
-                        cd client
-                        npm ci --production
-                        npm run build
-                        pm2 reload client || pm2 start npm --name "client" -- run start
-
-                        # Deploy server
-                        cd ../server
-                        npm ci --production
-                        npm run build
-                        pm2 reload server || pm2 start npm --name "server" -- run start
-                    EOF
-                    '''
+                script {
+                    dir('client') {
+                        sh 'pwd'
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Deployment successful!'
-        }
-        failure {
-            echo '❌ Deployment failed!'
         }
     }
 }
